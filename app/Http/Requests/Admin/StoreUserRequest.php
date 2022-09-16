@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBlogRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,18 +24,26 @@ class UpdateBlogRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_id' => ['required', 'exists:categories,id'],
-            'title' => ['required', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'image' => [
-                'nullable',
+                'required',
                 'file', // ファイルがアップロードされている
                 'image', // 画像ファイルである
                 'max:2000', // ファイル容量が2000kb以下である
                 'mimes:jpeg,jpg,png', // 形式はjpegかpng
-                'dimensions:min_width=300,min_height=300,max_width=1200,max_height=1200', // 画像の解像度が300px * 300px ~ 1200px * 1200px
+                'dimensions:min_width=100,min_height=100,max_width=300,max_height=300', // 画像の解像度が100px * 100px ~ 300px * 300px
             ],
-            'body' => ['required', 'max:20000'],
-            'cats.*' => ['distinct', 'exists:cats,id']//複数の値にバリデーションをかけるには.*
+            'introduction' => ['required', 'string', 'max:255'],
+        ];
+    }
+    
+    // 属性名の翻訳
+    public function attributes()
+    {
+        return [
+            'introduction' => '自己紹介文'
         ];
     }
 }
