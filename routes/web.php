@@ -27,7 +27,7 @@ Route::post('contact', [ContactController::class, 'sendMail']);//バリデーシ
 Route::get('/contact/complete', [ContactController::class, 'complete'])->name('contact.complete');
 
 
-//管理画面(ルートグループ)
+/*管理画面(ルートグループ)
 Route::prefix('/admin')
     ->name('admin.')
     ->group(function()
@@ -47,25 +47,24 @@ Route::prefix('/admin')
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [AuthController::class, 'login']);
         });
-    });
+    }); */
 
 //ユーザー管理
-Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
-Route::post('/admin/users/', [UserController::class, 'store'])->name('admin.users.store');
+Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create')->middleware('auth');
+Route::post('/admin/users/', [UserController::class, 'store'])->name('admin.users.store')->middleware('auth');
 
 
 
-/*ブログ (グループ化前のコード)
+//ブログ
 Route::get('/admin/blogs', [AdminBlogController::class, 'index'])->name('admin.blogs.index')->middleware('auth');
-Route::get('/admin/blogs/create', [AdminBlogController::class, 'create'])->name('admin.blogs.create');
-Route::post('/admin/blogs', [AdminBlogController::class, 'store'])->name('admin.blogs.store');
-Route::get('admin/blogs/{blog}', [AdminBlogController::class, 'edit'])->name('admin.blogs.edit');
-Route::put('admin/blogs/{blog}', [AdminBlogController::class, 'update'])->name('admin.blogs.update');
-Route::delete('admin/blogs/{blog}', [AdminBlogController::class, 'destroy'])->name('admin.blogs.destroy');
-*/
+Route::get('/admin/blogs/create', [AdminBlogController::class, 'create'])->name('admin.blogs.create')->middleware('auth');
+Route::post('/admin/blogs', [AdminBlogController::class, 'store'])->name('admin.blogs.store')->middleware('auth');
+Route::get('admin/blogs/{blog}', [AdminBlogController::class, 'edit'])->name('admin.blogs.edit')->middleware('auth');
+Route::put('admin/blogs/{blog}', [AdminBlogController::class, 'update'])->name('admin.blogs.update')->middleware('auth');
+Route::delete('admin/blogs/{blog}', [AdminBlogController::class, 'destroy'])->name('admin.blogs.destroy')->middleware('auth');
 
-/*認証(グループ化前のコード)
+
+//認証
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login')->middleware('guest');
-Route::post('/admin/login', [AuthController::class, 'login']);
-Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
-*/
+Route::post('/admin/login', [AuthController::class, 'login'])->middleware('guest');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout')->middleware('auth');

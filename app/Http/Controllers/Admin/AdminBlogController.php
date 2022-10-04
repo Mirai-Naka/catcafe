@@ -21,21 +21,25 @@ class AdminBlogController extends Controller
         return view('admin.blogs.index',['blogs' => $blogs]);
     }
 
-    //ブログ投稿表示
+    //ブログ投稿画面
     public function create()
     {
-        return view('admin.blogs.create');
+        $categories = Category::all();
+        $cats = Cat::all();
+        return view('admin.blogs.create', ['categories' => $categories, 'cats' => $cats]);
     }
 
     
     //ブログ投稿処理
     public function store(StoreBlogRequest $request)
     {
-        $savedImagePath = $request->file('image')->store('blogs','public');
-        $blog = new Blog($request->validated());
-        $blog->image = $savedImagePath;
-        $blog->save();//DBに保存
-
+        $validated = $request->validated();
+        $validated['image'] = $request->file('image')->store('blogs', 'public');
+        $blog = new Blog($validated);
+        $blog->category()->associate($validated['category_id']);
+        $blog->save();
+        $blog->cats()->attach($validated['cats']);
+ 
         return to_route('admin.blogs.index')->with('success', 'ブログを投稿しました');
     }
 
@@ -83,6 +87,7 @@ class AdminBlogController extends Controller
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);
+        $blog->cats()->detach();
         $blog->delete();
         Storage::disk('public')->delete($blog->image);        
 
