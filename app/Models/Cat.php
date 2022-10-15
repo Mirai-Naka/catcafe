@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cat extends Model
 {
+    protected $fillable = ['name','breed']; //保存したいカラム名が複数の場合
     use HasFactory;
 
     public function blogs()
